@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { requestService } from '../services/requestService';
 import { equipmentService } from '../services/equipmentService';
 import { teamService } from '../services/teamService';
-import { Wrench, Box, Users, AlertCircle, Clock } from 'lucide-react';
+import { Wrench, Box, Users, AlertCircle, Clock, Search } from 'lucide-react';
 import Badge from '../components/Badge';
 import TeamActivity from '../components/TeamActivity';
 import QuickActionCards from '../components/QuickActionCards';
@@ -113,6 +113,17 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-8 animate-fade-in">
+      <div className="rounded-3xl border border-white/50 bg-white/70 p-4 shadow-lg backdrop-blur-sm md:p-5">
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 md:h-5 md:w-5" />
+          <input
+            type="text"
+            placeholder="Search equipment, requests..."
+            className="w-full rounded-2xl border border-gray-200/70 bg-white px-10 py-3 text-sm text-gray-700 placeholder-gray-400 shadow-sm outline-none transition-all duration-300 focus:border-purple-400 focus:ring-2 focus:ring-purple-500/20 md:py-3.5"
+          />
+        </div>
+      </div>
+
       {/* Header */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 p-8 md:p-12 shadow-2xl">
         <div className="absolute inset-0 bg-black/10"></div>

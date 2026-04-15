@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Wrench, Box, Users, Calendar, LayoutDashboard, List, Activity, Bell, Search, Menu, X } from 'lucide-react';
+import { Wrench, Box, Users, Calendar, LayoutDashboard, List, Activity, Bell, Menu, X } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -21,48 +21,65 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%)' }}>
-      {/* Modern Header with Gradient */}
-      <header className="glass sticky top-0 z-50 border-b border-white/20 shadow-lg">
+      {/* Unified Header + Navigation */}
+      <header className="glass sticky top-0 z-50 border border-white/45 bg-white/25 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.55)] backdrop-blur-2xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
+          <div className="grid h-16 lg:h-[4.5rem] grid-cols-[auto,1fr,auto] items-center gap-3">
             {/* Logo */}
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2.5">
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur opacity-75"></div>
-                <div className="relative bg-gradient-to-r from-blue-600 to-purple-600 p-3 rounded-2xl shadow-lg">
-                  <Wrench className="h-6 w-6 text-white" />
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl blur opacity-60"></div>
+                <div className="relative bg-gradient-to-r from-blue-600 to-purple-600 p-2.5 rounded-xl shadow-lg ring-1 ring-white/40">
+                  <Wrench className="h-5 w-5 text-white" />
                 </div>
               </div>
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <h1 className="text-lg lg:text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent leading-tight">
                   GearGuard
                 </h1>
-                <p className="text-xs text-gray-500 font-medium">Maintenance Tracker</p>
+                <p className="hidden lg:block text-xs text-gray-500 font-medium">Maintenance Tracker</p>
               </div>
             </div>
 
-            {/* Search Bar - Desktop */}
-            <div className="hidden md:flex flex-1 max-w-md mx-8">
-              <div className="relative w-full">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search equipment, requests..."
-                  className="w-full pl-10 pr-4 py-2.5 bg-white/60 border border-gray-200/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all duration-300 placeholder-gray-400 text-sm"
-                />
+            {/* Center Navigation */}
+            <div className="hidden lg:flex min-w-0 justify-center px-2 lg:px-6">
+              <div className="flex max-w-full items-center gap-1 overflow-x-auto rounded-2xl border border-white/50 bg-white/35 px-2 py-1.5 shadow-lg shadow-slate-900/5 backdrop-blur-xl scrollbar-thin">
+                {navItems.map((item) => (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    className={({ isActive }) =>
+                      `group relative flex items-center whitespace-nowrap rounded-xl border px-3 py-2 text-xs font-medium transition-all duration-300 lg:text-sm ${
+                        isActive
+                          ? 'border-white/30 text-white shadow-lg'
+                          : 'border-transparent text-gray-600 hover:border-white/60 hover:text-gray-900 hover:bg-white/60'
+                      }`
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        {isActive && (
+                          <div className={`absolute inset-0 bg-gradient-to-r ${item.gradient} rounded-xl ring-1 ring-white/30`}></div>
+                        )}
+                        <item.icon className={`relative h-4 w-4 lg:h-5 lg:w-5 mr-1.5 lg:mr-2 transition-transform duration-300 ${isActive ? '' : 'group-hover:scale-110'}`} />
+                        <span className="relative">{item.label}</span>
+                      </>
+                    )}
+                  </NavLink>
+                ))}
               </div>
             </div>
 
             {/* Actions */}
-            <div className="flex items-center space-x-4">
-              <button className="relative p-2.5 text-gray-600 hover:text-purple-600 transition-colors rounded-xl hover:bg-white/60">
+            <div className="flex items-center space-x-2 lg:space-x-3">
+              <button className="relative rounded-xl border border-white/50 bg-white/30 p-2 text-gray-600 shadow-sm backdrop-blur-xl transition-colors hover:border-white/70 hover:text-purple-600 hover:bg-white/60">
                 <Bell className="h-5 w-5" />
                 <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full ring-2 ring-white"></span>
               </button>
               
               {/* User Avatar */}
-              <div className="hidden md:flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white font-semibold shadow-lg">
+              <div className="hidden lg:flex items-center space-x-3">
+                <div className="w-9 h-9 rounded-xl border border-white/50 bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white text-sm font-semibold shadow-lg ring-1 ring-white/40">
                   JD
                 </div>
               </div>
@@ -70,57 +87,26 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-2 text-gray-600 hover:text-purple-600"
+                className="lg:hidden rounded-xl border border-white/50 bg-white/30 p-2 text-gray-600 shadow-sm backdrop-blur-xl hover:border-white/70 hover:text-purple-600"
               >
                 {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </button>
             </div>
           </div>
-        </div>
-      </header>
-
-      {/* Modern Navigation */}
-      <nav className="glass border-b border-white/20 shadow-md sticky top-20 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="hidden md:flex space-x-2 py-3">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={({ isActive }) =>
-                  `group relative flex items-center px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 ${
-                    isActive
-                      ? 'text-white shadow-lg'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-white/60'
-                  }`
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    {isActive && (
-                      <div className={`absolute inset-0 bg-gradient-to-r ${item.gradient} rounded-xl`}></div>
-                    )}
-                    <item.icon className={`relative h-5 w-5 mr-2 transition-transform duration-300 ${isActive ? '' : 'group-hover:scale-110'}`} />
-                    <span className="relative">{item.label}</span>
-                  </>
-                )}
-              </NavLink>
-            ))}
-          </div>
 
           {/* Mobile Navigation */}
           {mobileMenuOpen && (
-            <div className="md:hidden py-4 space-y-2">
+            <div className="lg:hidden mt-2 space-y-2 rounded-2xl border border-white/45 bg-white/35 p-3 shadow-lg backdrop-blur-xl">
               {navItems.map((item) => (
                 <NavLink
                   key={item.to}
                   to={item.to}
                   onClick={() => setMobileMenuOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all ${
+                    `flex items-center rounded-xl border px-4 py-3 text-sm font-medium transition-all ${
                       isActive
-                        ? 'text-white bg-gradient-to-r ' + item.gradient
-                        : 'text-gray-600 hover:bg-white/60'
+                        ? 'border-white/30 text-white shadow-lg bg-gradient-to-r ' + item.gradient
+                        : 'border-transparent text-gray-600 hover:border-white/60 hover:bg-white/60'
                     }`
                   }
                 >
@@ -131,10 +117,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
           )}
         </div>
-      </nav>
+      </header>
 
       {/* Main Content with Animation */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 page-container">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-8 page-container">
         {children}
       </main>
 
