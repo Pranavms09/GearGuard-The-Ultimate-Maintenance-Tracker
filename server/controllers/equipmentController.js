@@ -1,9 +1,6 @@
 const { Equipment, MaintenanceTeam, TeamMember, MaintenanceRequest } = require('../models');
 
-const mongoose = require('mongoose');
 
-console.log("DB HOST:", mongoose.connection.host);
-console.log("DB NAME:", mongoose.connection.name);
 // Get all equipment
 exports.getAllEquipment = async (req, res) => {
   try {
