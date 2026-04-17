@@ -1,11 +1,10 @@
 ---
-
 name: "🐛 Bug Report"
 about: "Report a bug in the project"
-title: "[BUG]"
-labels: []
+title: "[BUG] "
+labels: bug, NSoC'26
 assignees: []
--------------
+---
 
 ## 🐞 Description
 
@@ -41,9 +40,24 @@ Add screenshots if applicable.
 
 ## 🖥️ Environment
 
-* OS:
-* Browser:
-* Version:
+- OS:
+- Browser:
+- Version:
+
+---
+
+## 🏷️ NSoC'26 Information
+
+- **Level:** (Level 1/2/3)
+- **Points:** (3/5/10)
+
+---
+
+## ✅ Acceptance Criteria
+
+- [ ] Bug is fixed
+- [ ] Tested locally
+- [ ] No regression issues
 
 ---
 

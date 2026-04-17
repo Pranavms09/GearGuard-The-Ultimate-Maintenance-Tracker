@@ -1,11 +1,10 @@
 ---
-
 name: ✨ Feature Request
 about: Suggest a new feature
 title: "[FEATURE] "
-labels:
-assignees:
-----------
+labels: enhancement, NSoC'26
+assignees: []
+---
 
 ## 🚀 Feature Description
 
@@ -28,6 +27,21 @@ Explain your idea clearly.
 ## 🔄 Alternatives Considered
 
 Any alternative solutions?
+
+---
+
+## 🏷️ NSoC'26 Information
+
+- **Level:** (Level 1/2/3)
+- **Points:** (3/5/10)
+
+---
+
+## ✅ Acceptance Criteria
+
+- [ ] Feature implemented
+- [ ] Tests added
+- [ ] Documentation updated
 
 ---
 
