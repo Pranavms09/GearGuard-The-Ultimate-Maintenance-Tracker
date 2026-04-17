@@ -114,6 +114,24 @@ const EquipmentDetailModal: React.FC<EquipmentDetailModalProps> = ({
               </p>
             </div>
           )}
+          {equipment.licensePlate && (
+            <div>
+              <p className="text-sm text-gray-500">License Plate</p>
+              <p className="font-medium">{equipment.licensePlate}</p>
+            </div>
+          )}
+          {equipment.currentMileage !== undefined && (
+            <div>
+              <p className="text-sm text-gray-500">Current Mileage</p>
+              <p className="font-medium">{equipment.currentMileage.toLocaleString()} km</p>
+            </div>
+          )}
+          {equipment.fuelType && (
+            <div>
+              <p className="text-sm text-gray-500">Fuel Type</p>
+              <p className="font-medium">{equipment.fuelType}</p>
+            </div>
+          )}
         </div>
 
         {equipment.maintenanceTeam && (

@@ -13,6 +13,9 @@ const EquipmentSchema = new Schema({
   manufacturer: { type: String },
   model: { type: String },
   status: { type: String, enum: ['active', 'inactive', 'scrapped', 'under-maintenance'], default: 'active' },
+  licensePlate: { type: String, unique: true, sparse: true },
+  currentMileage: { type: Number, default: 0 },
+  fuelType: { type: String, enum: ['Petrol', 'Diesel', 'Electric', 'Hybrid', 'CNG'] },
   notes: { type: String },
   maintenanceTeamId: { type: Schema.Types.ObjectId, ref: 'MaintenanceTeam' },
   defaultTechnicianId: { type: Schema.Types.ObjectId, ref: 'TeamMember' }

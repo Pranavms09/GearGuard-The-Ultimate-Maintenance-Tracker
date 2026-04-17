@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Wrench, Box, Users, Calendar, LayoutDashboard, List, Activity, Bell, Menu, X } from 'lucide-react';
+import { Wrench, Box, Users, Calendar, LayoutDashboard, List, Activity, Bell, Menu, X, Car } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -15,6 +15,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { to: '/requests-all', icon: List, label: 'All Requests', gradient: 'from-pink-500 to-red-600' },
     { to: '/calendar', icon: Calendar, label: 'Calendar', gradient: 'from-cyan-500 to-blue-600' },
     { to: '/equipment', icon: Box, label: 'Equipment', gradient: 'from-green-500 to-teal-600' },
+    { to: '/vehicles', icon: Car, label: 'Vehicles', gradient: 'from-orange-500 to-red-600' },
     { to: '/teams', icon: Users, label: 'Teams', gradient: 'from-yellow-500 to-orange-600' },
     { to: '/activity', icon: Activity, label: 'Activity', gradient: 'from-indigo-500 to-purple-600' },
   ];

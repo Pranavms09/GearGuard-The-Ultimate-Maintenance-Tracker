@@ -7,6 +7,7 @@ import EquipmentList from './pages/EquipmentList';
 import TeamsPage from './pages/TeamsPage';
 import RequestsPage from './pages/RequestsPage';
 import ActivityPage from './pages/ActivityPage';
+import VehicleList from './pages/VehicleList';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/activity" element={<ActivityPage />} />
           <Route path="/calendar" element={<CalendarView />} />
           <Route path="/equipment" element={<EquipmentList />} />
+          <Route path="/vehicles" element={<VehicleList />} />
           <Route path="/teams" element={<TeamsPage />} />
         </Routes>
       </Layout>
