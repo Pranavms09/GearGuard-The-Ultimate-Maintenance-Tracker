@@ -5,6 +5,7 @@ const {
   TeamMember,
 } = require("../models");
 const { logActivity } = require("../utils/logActivity");
+const NotificationService = require("../services/notificationService");
 
 // Remove empty-string ObjectId/date fields so Mongoose validation doesn't fail
 const sanitizeBody = (body) => {
@@ -149,6 +150,10 @@ exports.createRequest = async (req, res) => {
       entityId: String(requestWithRelations._id),
     });
 
+    // Notify: request created
+    const io = req.app.get("socketio");
+    await NotificationService.notifyRequestChange(io, "request_created", requestWithRelations);
+
     // Activity: equipment status changed (if we changed it)
     if (
       equipmentDoc &&
@@ -232,6 +237,15 @@ exports.updateRequest = async (req, res) => {
       entityId: String(updatedRequest._id),
     });
 
+    // Notify: request updated or completed
+    const io = req.app.get("socketio");
+    await NotificationService.notifyRequestChange(
+      io, 
+      completed ? "request_completed" : "request_updated", 
+      updatedRequest, 
+      completed ? "Completed" : `Stage changed to ${newStage}`
+    );
+
     // If equipment status changed due to stage update, log it too
     if (
       request.equipment &&
@@ -306,6 +320,15 @@ exports.updateRequestStage = async (req, res) => {
       entityId: String(updatedRequest._id),
     });
 
+    // Notify: request updated (Kanban)
+    const io = req.app.get("socketio");
+    await NotificationService.notifyRequestChange(
+      io, 
+      completed ? "request_completed" : "request_updated", 
+      updatedRequest, 
+      completed ? "Completed via Kanban" : `Moved to ${stage}`
+    );
+
     if (updatedRequest.equipment && completed) {
       const toStatus = stage === "scrap" ? "scrapped" : "active";
       await logActivity({
@@ -345,6 +368,10 @@ exports.deleteRequest = async (req, res) => {
       entityType: "request",
       entityId: String(request._id),
     });
+
+    // Notify: request deleted
+    const io = req.app.get("socketio");
+    await NotificationService.notifyRequestChange(io, "request_deleted", request);
 
     res.json({ message: "Request deleted successfully" });
   } catch (error) {

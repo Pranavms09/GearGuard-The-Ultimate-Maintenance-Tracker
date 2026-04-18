@@ -1,5 +1,27 @@
 const { Equipment, MaintenanceTeam, TeamMember, MaintenanceRequest } = require('../models');
+const NotificationService = require('../services/notificationService');
 
+// Remove empty-string fields so Mongoose type casting/enum validation doesn't fail
+const sanitizeBody = (body) => {
+  const cleaned = { ...body };
+  
+  // Clean ObjectIds
+  const objectIdFields = ['maintenanceTeamId', 'defaultTechnicianId'];
+  objectIdFields.forEach(f => {
+    if (cleaned[f] === "" || cleaned[f] === null) delete cleaned[f];
+  });
+
+  // Clean Dates
+  const dateFields = ['purchaseDate', 'warrantyExpiry'];
+  dateFields.forEach(f => {
+    if (cleaned[f] === "" || cleaned[f] === null) delete cleaned[f];
+  });
+
+  // Clean Enums
+  if (cleaned.fuelType === "" || cleaned.fuelType === null) delete cleaned.fuelType;
+
+  return cleaned;
+};
 
 // Get all equipment
 exports.getAllEquipment = async (req, res) => {
@@ -39,10 +61,23 @@ exports.getEquipmentById = async (req, res) => {
 // Create equipment
 exports.createEquipment = async (req, res) => {
   try {
-    const equipment = await Equipment.create(req.body);
+    const payload = sanitizeBody(req.body);
+    const equipment = await Equipment.create(payload);
     const equipmentWithRelations = await Equipment.findById(equipment._id)
       .populate('maintenanceTeam')
       .populate('defaultTechnician');
+
+    // Notify: new equipment or vehicle added
+    const io = req.app.get("socketio");
+    if (io) {
+      const typeLabel = equipment.category?.toLowerCase() === 'vehicle' ? 'vehicle' : 'equipment';
+      await NotificationService.sendNotification(io, {
+        type: 'system',
+        message: `New ${typeLabel} registered: ${equipment.name} (${equipment.serialNumber || equipment.licensePlate || 'No ID'})`,
+        priority: 'low'
+      });
+    }
+
     res.status(201).json(equipmentWithRelations);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -52,7 +87,8 @@ exports.createEquipment = async (req, res) => {
 // Update equipment
 exports.updateEquipment = async (req, res) => {
   try {
-    const updatedEquipment = await Equipment.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    const payload = sanitizeBody(req.body);
+    const updatedEquipment = await Equipment.findByIdAndUpdate(req.params.id, payload, { new: true })
       .populate('maintenanceTeam')
       .populate('defaultTechnician');
 

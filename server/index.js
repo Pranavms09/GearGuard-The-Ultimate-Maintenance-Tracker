@@ -1,4 +1,6 @@
 const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
 const activitiesRoutes = require("./routes/activities");
 const cors = require("cors");
 const morgan = require("morgan");
@@ -10,9 +12,30 @@ const equipmentRoutes = require("./routes/equipment");
 const teamRoutes = require("./routes/teams");
 const memberRoutes = require("./routes/members");
 const requestRoutes = require("./routes/requests");
+const notificationRoutes = require("./routes/notifications");
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
+
 const PORT = process.env.PORT || 5000;
+
+// Socket.IO connection
+io.on("connection", (socket) => {
+  console.log(`🔌 User connected: ${socket.id}`);
+
+  socket.on("disconnect", () => {
+    console.log(`❌ User disconnected: ${socket.id}`);
+  });
+});
+
+// Make io accessible to routes/controllers
+app.set("socketio", io);
 
 // Middleware
 app.use(cors());
@@ -25,7 +48,8 @@ app.use("/api/equipment", equipmentRoutes);
 app.use("/api/teams", teamRoutes);
 app.use("/api/members", memberRoutes);
 app.use("/api/requests", requestRoutes);
-app.use("/api/activities", activitiesRoutes); // ✅ added
+app.use("/api/activities", activitiesRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
@@ -55,7 +79,7 @@ const startServer = async () => {
   try {
     await syncDatabase();
 
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`\n🚀 GearGuard Server Running!`);
       console.log(`📡 API: http://localhost:${PORT}/api`);
       console.log(`💚 Health: http://localhost:${PORT}/api/health`);
