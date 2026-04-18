@@ -11,6 +11,9 @@ export interface Equipment {
   manufacturer?: string;
   model?: string;
   status: 'active' | 'inactive' | 'scrapped' | 'under-maintenance';
+  licensePlate?: string;
+  currentMileage?: number;
+  fuelType?: 'Petrol' | 'Diesel' | 'Electric' | 'Hybrid' | 'CNG';
   notes?: string;
   maintenanceTeamId?: string;
   maintenanceTeam?: MaintenanceTeam;
@@ -83,6 +86,9 @@ export interface CreateEquipmentDto {
   manufacturer?: string;
   model?: string;
   status?: string;
+  licensePlate?: string;
+  currentMileage?: number;
+  fuelType?: string;
   notes?: string;
   maintenanceTeamId?: string;
   defaultTechnicianId?: string;

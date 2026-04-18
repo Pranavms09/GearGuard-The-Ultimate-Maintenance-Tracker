@@ -4,6 +4,7 @@ import Button from './Button';
 import { CreateEquipmentDto } from '../types';
 import { equipmentService } from '../services/equipmentService';
 import { teamService } from '../services/teamService';
+import { Car } from 'lucide-react';
 
 interface EquipmentModalProps {
   isOpen: boolean;
@@ -26,6 +27,9 @@ const EquipmentModal: React.FC<EquipmentModalProps> = ({ isOpen, onClose, onSucc
     notes: '',
     maintenanceTeamId: '',
     defaultTechnicianId: '',
+    licensePlate: '',
+    currentMileage: 0,
+    fuelType: '',
   });
   
   const [teams, setTeams] = useState<any[]>([]);
@@ -96,14 +100,20 @@ const EquipmentModal: React.FC<EquipmentModalProps> = ({ isOpen, onClose, onSucc
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Category *
             </label>
-            <input
-              type="text"
+            <select
               required
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-              placeholder="e.g., Machine, Vehicle, Computer"
-            />
+            >
+              <option value="">Select category...</option>
+              <option value="Machine">Machine</option>
+              <option value="Vehicle">Vehicle</option>
+              <option value="Computer">Computer</option>
+              <option value="Office">Office</option>
+              <option value="Tools">Tools</option>
+              <option value="Other">Other</option>
+            </select>
           </div>
 
           <div>
@@ -209,6 +219,57 @@ const EquipmentModal: React.FC<EquipmentModalProps> = ({ isOpen, onClose, onSucc
             />
           </div>
         </div>
+
+        {formData.category.toLowerCase() === 'vehicle' && (
+          <div className="bg-orange-50 p-4 rounded-xl space-y-4 border border-orange-100">
+            <h4 className="text-sm font-bold text-orange-800 flex items-center">
+              <Car className="h-4 w-4 mr-2" />
+              Vehicle Details
+            </h4>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-orange-700 mb-1">
+                  License Plate
+                </label>
+                <input
+                  type="text"
+                  value={formData.licensePlate}
+                  onChange={(e) => setFormData({ ...formData, licensePlate: e.target.value })}
+                  placeholder="e.g., ABC-1234"
+                  className="w-full px-3 py-2 border border-orange-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-orange-700 mb-1">
+                  Current Mileage (km)
+                </label>
+                <input
+                  type="number"
+                  value={formData.currentMileage}
+                  onChange={(e) => setFormData({ ...formData, currentMileage: Number(e.target.value) })}
+                  className="w-full px-3 py-2 border border-orange-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-orange-700 mb-1">
+                Fuel Type
+              </label>
+              <select
+                value={formData.fuelType}
+                onChange={(e) => setFormData({ ...formData, fuelType: e.target.value })}
+                className="w-full px-3 py-2 border border-orange-200 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white"
+              >
+                <option value="">Select fuel type...</option>
+                <option value="Petrol">Petrol</option>
+                <option value="Diesel">Diesel</option>
+                <option value="Electric">Electric</option>
+                <option value="Hybrid">Hybrid</option>
+                <option value="CNG">CNG</option>
+              </select>
+            </div>
+          </div>
+        )}
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
