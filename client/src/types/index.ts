@@ -106,4 +106,15 @@ export interface CreateMaintenanceRequestDto {
   createdById?: string;
 }
 
+export interface Notification {
+  _id: string;
+  type: 'request_created' | 'request_updated' | 'request_completed' | 'request_deleted' | 'system';
+  message: string;
+  requestId?: string;
+  read: boolean;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  createdAt: string;
+  updatedAt: string;
+}
+
 export * from './activity';

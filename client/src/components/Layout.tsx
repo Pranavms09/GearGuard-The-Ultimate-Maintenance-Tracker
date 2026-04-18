@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Wrench, Box, Users, Calendar, LayoutDashboard, List, Activity, Bell, Menu, X, Car } from 'lucide-react';
+import { Wrench, Box, Users, Calendar, LayoutDashboard, List, Activity, Bell, Menu, X, Car, Settings } from 'lucide-react';
+import NotificationCenter from './NotificationCenter';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -18,6 +19,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { to: '/vehicles', icon: Car, label: 'Vehicles', gradient: 'from-orange-500 to-red-600' },
     { to: '/teams', icon: Users, label: 'Teams', gradient: 'from-yellow-500 to-orange-600' },
     { to: '/activity', icon: Activity, label: 'Activity', gradient: 'from-indigo-500 to-purple-600' },
+    { to: '/settings', icon: Settings, label: 'Settings', gradient: 'from-gray-500 to-slate-700' },
   ];
 
   return (
@@ -73,10 +75,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
             {/* Actions */}
             <div className="flex items-center space-x-2 lg:space-x-3">
-              <button className="relative rounded-xl border border-white/50 bg-white/30 p-2 text-gray-600 shadow-sm backdrop-blur-xl transition-colors hover:border-white/70 hover:text-purple-600 hover:bg-white/60">
-                <Bell className="h-5 w-5" />
-                <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full ring-2 ring-white"></span>
-              </button>
+              <NotificationCenter />
               
               {/* User Avatar */}
               <div className="hidden lg:flex items-center space-x-3">
