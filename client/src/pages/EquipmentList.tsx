@@ -7,6 +7,7 @@ import { Plus, Wrench, MapPin, Calendar } from 'lucide-react';
 import EquipmentModal from '../components/EquipmentModal';
 import EquipmentDetailModal from '../components/EquipmentDetailModal';
 import ResourceManager from '../components/ResourceManager';
+import Spinner from '../components/Spinner';
 
 const EquipmentList: React.FC = () => {
   const [equipment, setEquipment] = useState<Equipment[]>([]);
@@ -37,7 +38,7 @@ const EquipmentList: React.FC = () => {
   } as const;
 
   if (loading) {
-    return <div className="text-center py-8">Loading equipment...</div>;
+    return <Spinner size="lg" label="Loading equipment..." centered />;
   }
 
   return (

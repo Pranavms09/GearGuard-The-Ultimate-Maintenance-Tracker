@@ -7,6 +7,7 @@ import Badge from '../components/Badge';
 import { Clock, User, AlertCircle, Plus } from 'lucide-react';
 import Button from '../components/Button';
 import RequestModal from '../components/RequestModal';
+import Spinner from '../components/Spinner';
 
 const STAGES = [
   { id: 'new', title: 'New', color: 'bg-blue-50 border-blue-200' },
@@ -17,10 +18,9 @@ const STAGES = [
 
 interface RequestCardProps {
   request: MaintenanceRequest;
-  onUpdate: () => void;
 }
 
-const RequestCard: React.FC<RequestCardProps> = ({ request, onUpdate }) => {
+const RequestCard: React.FC<RequestCardProps> = ({ request}) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'REQUEST',
     item: { id: request.id, stage: request.stage },
@@ -120,7 +120,7 @@ interface ColumnProps {
   onUpdate: () => void;
 }
 
-const Column: React.FC<ColumnProps> = ({ stage, requests, onDrop, onUpdate }) => {
+const Column: React.FC<ColumnProps> = ({ stage, requests, onDrop,}) => {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'REQUEST',
     drop: (item: { id: string; stage: string }) => {
@@ -149,7 +149,7 @@ const Column: React.FC<ColumnProps> = ({ stage, requests, onDrop, onUpdate }) =>
 
       <div className="space-y-2">
         {requests.map((request) => (
-          <RequestCard key={request.id} request={request} onUpdate={onUpdate} />
+          <RequestCard key={request.id} request={request} />
         ))}
       </div>
     </div>
@@ -191,7 +191,7 @@ const KanbanBoard: React.FC = () => {
   }, {} as Record<string, MaintenanceRequest[]>);
 
   if (loading) {
-    return <div className="text-center py-8">Loading requests...</div>;
+    return <Spinner size="lg" label="Loading requests..." centered />;
   }
 
   return (
