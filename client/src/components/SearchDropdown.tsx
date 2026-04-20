@@ -96,7 +96,7 @@ const SearchDropdown = ({ results, query, isLoading, onClose }: SearchDropdownPr
             <div
               key={req._id}
               onClick={() => {
-                navigate('/kanban');
+                navigate('/requests');
                 onClose();
               }}
               className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 transition"
