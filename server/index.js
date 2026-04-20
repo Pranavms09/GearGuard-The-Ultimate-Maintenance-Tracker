@@ -1,3 +1,6 @@
+require("dotenv").config({ path: __dirname + "/.env" });
+
+const authRoutes = require("./routes/auth");
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -5,7 +8,7 @@ const activitiesRoutes = require("./routes/activities");
 const cors = require("cors");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
-require("dotenv").config();
+
 
 const { syncDatabase } = require("./models");
 const equipmentRoutes = require("./routes/equipment");
@@ -44,6 +47,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
+app.use("/api/auth", authRoutes);
 app.use("/api/equipment", equipmentRoutes);
 app.use("/api/teams", teamRoutes);
 app.use("/api/members", memberRoutes);
