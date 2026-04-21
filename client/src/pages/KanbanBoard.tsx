@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { MaintenanceRequest } from '../types';
-import { requestService } from '../services/requestService';
+import { MaintenanceRequest, RequestFilters, defaultFilters } from '../types';
+import { requestService, getFiltered } from '../services/requestService';
 import Badge from '../components/Badge';
 import { Clock, User, AlertCircle, Plus } from 'lucide-react';
 import Button from '../components/Button';
 import RequestModal from '../components/RequestModal';
 import Spinner from '../components/Spinner';
+import FilterBar from '../components/FilterBar';
 
 const STAGES = [
   { id: 'new', title: 'New', color: 'bg-blue-50 border-blue-200' },
@@ -18,9 +19,10 @@ const STAGES = [
 
 interface RequestCardProps {
   request: MaintenanceRequest;
+  onUpdate: () => void;
 }
 
-const RequestCard: React.FC<RequestCardProps> = ({ request}) => {
+const RequestCard: React.FC<RequestCardProps> = ({ request, onUpdate: _onUpdate }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'REQUEST',
     item: { id: request.id, stage: request.stage },
@@ -29,6 +31,7 @@ const RequestCard: React.FC<RequestCardProps> = ({ request}) => {
     }),
   }));
 
+  // Upstream's enhanced overdue check with date normalization
   const isOverdue = (date?: string, stage?: string) => {
     if (!date) return false;
 
@@ -60,18 +63,18 @@ const RequestCard: React.FC<RequestCardProps> = ({ request}) => {
       style={{ opacity: isDragging ? 0.5 : 1 }}
       className={`kanban-card bg-white p-4 rounded-lg shadow-sm border-2 mb-3 ${
         isOverdue(request.scheduledDate, request.stage)
-        ? 'border-red-400 bg-red-50'
-        : 'border-gray-200'
-    }`}
+          ? 'border-red-400 bg-red-50'
+          : 'border-gray-200'
+      }`}
     >
       {isOverdue(request.scheduledDate, request.stage) && (
         <div className="flex items-center text-red-600 text-xs mb-2">
           <span className="h-2 w-2 bg-red-500 rounded-full animate-ping mr-2"></span>
           <AlertCircle className="h-3 w-3 mr-1" />
           Overdue
-      </div>
-    )}
-      
+        </div>
+      )}
+
       <div className="flex items-start justify-between mb-2">
         <h4 className="font-medium text-gray-900 text-sm">{request.subject}</h4>
         <Badge variant={priorityColors[request.priority]} size="sm">
@@ -114,7 +117,7 @@ const RequestCard: React.FC<RequestCardProps> = ({ request}) => {
 };
 
 interface ColumnProps {
-  stage: typeof STAGES[0];
+  stage: (typeof STAGES)[0];
   requests: MaintenanceRequest[];
   onDrop: (requestId: string, newStage: string) => void;
   onUpdate: () => void;
@@ -149,7 +152,7 @@ const Column: React.FC<ColumnProps> = ({ stage, requests, onDrop,}) => {
 
       <div className="space-y-2">
         {requests.map((request) => (
-          <RequestCard key={request.id} request={request} />
+          <RequestCard key={request.id} request={request} onUpdate={() => {}}/>
         ))}
       </div>
     </div>
@@ -160,21 +163,33 @@ const KanbanBoard: React.FC = () => {
   const [requests, setRequests] = useState<MaintenanceRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [filters, setFilters] = useState<RequestFilters>(defaultFilters);
+  const [resultCount, setResultCount] = useState(0);
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const data = await getFiltered(filters);
+        setRequests(data);
+        setResultCount(data.length);
+      } catch (error) {
+        console.error('Failed to fetch requests:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRequests();
+  }, [filters]);
 
   const loadRequests = async () => {
     try {
-      const data = await requestService.getAll();
+      const data = await getFiltered(filters);
       setRequests(data);
+      setResultCount(data.length);
     } catch (error) {
       console.error('Failed to load requests:', error);
-    } finally {
-      setLoading(false);
     }
   };
-
-  useEffect(() => {
-    loadRequests();
-  }, []);
 
   const handleDrop = async (requestId: string, newStage: string) => {
     try {
@@ -185,10 +200,13 @@ const KanbanBoard: React.FC = () => {
     }
   };
 
-  const groupedRequests = STAGES.reduce((acc, stage) => {
-    acc[stage.id] = requests.filter((req) => req.stage === stage.id);
-    return acc;
-  }, {} as Record<string, MaintenanceRequest[]>);
+  const groupedRequests = STAGES.reduce(
+    (acc, stage) => {
+      acc[stage.id] = requests.filter((req) => req.stage === stage.id);
+      return acc;
+    },
+    {} as Record<string, MaintenanceRequest[]>
+  );
 
   if (loading) {
     return <Spinner size="lg" label="Loading requests..." centered />;
@@ -205,17 +223,29 @@ const KanbanBoard: React.FC = () => {
           </Button>
         </div>
 
-        <div className="flex gap-4 overflow-x-auto pb-4">
-          {STAGES.map((stage) => (
-            <Column
-              key={stage.id}
-              stage={stage}
-              requests={groupedRequests[stage.id] || []}
-              onDrop={handleDrop}
-              onUpdate={loadRequests}
-            />
-          ))}
-        </div>
+        <FilterBar
+          filters={filters}
+          setFilters={setFilters}
+          resultCount={resultCount}
+        />
+
+        {requests.length === 0 ? (
+          <div className="text-center text-gray-400 py-12 text-sm">
+            No requests match your current filters.
+          </div>
+        ) : (
+          <div className="flex gap-4 overflow-x-auto pb-4">
+            {STAGES.map((stage) => (
+              <Column
+                key={stage.id}
+                stage={stage}
+                requests={groupedRequests[stage.id] || []}
+                onDrop={handleDrop}
+                onUpdate={loadRequests}
+              />
+            ))}
+          </div>
+        )}
 
         {isModalOpen && (
           <RequestModal
