@@ -16,6 +16,7 @@ const teamRoutes = require("./routes/teams");
 const memberRoutes = require("./routes/members");
 const requestRoutes = require("./routes/requests");
 const notificationRoutes = require("./routes/notifications");
+const adminRoutes = require("./routes/admin");
 
 const app = express();
 const server = http.createServer(app);
@@ -54,6 +55,7 @@ app.use("/api/members", memberRoutes);
 app.use("/api/requests", requestRoutes);
 app.use("/api/activities", activitiesRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
